@@ -1,0 +1,7 @@
+[BROKER]
+
+#Alpaca API keys
+key_id = PKA44KFCXY9PQQAOXL87
+secret_key = kRV7IqSBHogNz0mNbL1iO7Ea3d3feUpIjgKQUJN0
+
+[BOT]
