@@ -1,12 +1,18 @@
+__author__ = "Rob Knight, Gavin Huttley, and Peter Maxwell"
+__copyright__ = "Copyright 2007, The Cogent Project"
+__credits__ = ["Rob Knight", "Peter Maxwell", "Gavin Huttley",
+                    "Matthew Wakefield"]
+__license__ = "GPL"
+__version__ = "1.0.1"
+__maintainer__ = "Rob Knight"
+__email__ = "rob@spot.colorado.edu"
+__status__ = "Production"
+
 import logging, sys, os
 import time
 from configparser import ConfigParser
 import pandas as pd
-import ib_bridge
-import datetime
-
-
-pd.set_option('mode.chained_assignment', None)
+from alpaca_broker import AlpacaLiveBroker
 
 
 if __name__ == '__main__':
@@ -19,35 +25,26 @@ if __name__ == '__main__':
     config.read('main_cfg.txt')
     trades_filename = 'trades.csv'
     if os.path.exists(trades_filename):
-        trade_info_df = pd.read_csv(trades_filename, index_col=None)
-        # connect to IB
-        portid = config.getint(section='IB', option='port')
-        account = config.get(section='IB', option='account')
-        clientid = config.get(section='IB', option='clientid')
-        ib = ib_bridge.ib_bridge(ipaddress='127.0.0.1', portid=portid, clientid=clientid, account=account)
+        # connect to Alpaca
+        key_id = config.get(section='BROKER', option='key_id')
+        secret_key = config.get(section='BROKER', option='secret_key')
+        alpaca = AlpacaLiveBroker(key_id=key_id, secret_key=secret_key)
+
         # process requests
+        trade_info_df = pd.read_csv(trades_filename, index_col=None)
         for tidx in range(len(trade_info_df)):
             trade_info = trade_info_df.iloc[tidx]
-            logging.debug('[{}] processing {} order to {} # {}'.format(trade_info['Symbol'], trade_info['Entry Order Type'], trade_info['Action'], trade_info['Quantity']))
-            trade_info['Entry time'] = None if pd.isnull(trade_info['Entry time']) else datetime.datetime.now().\
-                replace(hour=int(trade_info['Entry time'].split(':')[0]),
-                minute=int(trade_info['Entry time'].split(':')[1]),
-                second=int(trade_info['Entry time'].split(':')[2]), microsecond=00)
-            trade_info['Exit order'] = None if pd.isnull(trade_info['Exit order']) else trade_info['Exit order']
-            trade_info['Entry Lmt Price'] = None if pd.isnull(trade_info['Entry Lmt Price']) else trade_info['Entry Lmt Price']
-            trade_info['Exit Lmt Price'] = None if pd.isnull(trade_info['Exit Lmt Price']) else trade_info['Exit Lmt Price']
-            trade_info['Exit time'] = None if pd.isnull(trade_info['Exit time']) else datetime.datetime.now().\
-                replace(hour=int(trade_info['Exit time'].split(':')[0]),
-                minute=int(trade_info['Exit time'].split(':')[1]),
-                second=int(trade_info['Exit time'].split(':')[2]), microsecond=00)
-            exit_order = {'orderType':trade_info['Exit order'], 'lmtPrice':trade_info['Exit Lmt Price'], 'goodAfterTime':trade_info['Exit time']}
-            ib.execute_order(symbol=trade_info['Symbol'], secType=trade_info['Type'], exchange=trade_info['Exchange'],
-                            currency=trade_info['Currency'], action=trade_info['Action'], quantity=trade_info['Quantity'],
-                            orderType=trade_info['Entry Order Type'], lmtPrice=trade_info['Entry Lmt Price'],
-                            tif=trade_info['Time in Force'], goodAfterTime=trade_info['Entry time'],
-                            goodTillDate=None, exit_order=exit_order)
-            time.sleep(3)
+            logging.debug('[{}] processing {} order to {} # {}'.format(trade_info['Symbol'], trade_info['Order Type'], trade_info['Action'], trade_info['Quantity']))
 
-        ib.terminate()
+            kwargs = {}
+            if 'LMT' == trade_info['Order Type']:
+                kwargs['exectype'] = 'limit'
+                kwargs['price'] = trade_info['Lmt Price']
+
+            if 'buy' == trade_info['Action']:
+                alpaca.buy(ticker=trade_info['Symbol'], size=trade_info['Quantity'], kwargs=kwargs)
+            else:
+                alpaca.sell(ticker=trade_info['Symbol'], size=trade_info['Quantity'], kwargs=kwargs)
+            time.sleep(3)
     else:
         logging.debug('unable to find {}, quitting'.format(trades_filename))
