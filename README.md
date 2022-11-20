@@ -1,13 +1,33 @@
-# icheck-bootstrap
+# CSV Trader
 
-Did you had a problem customizing html checkboxes and radio buttons? icheck-bootstrap is pure css solution for displaying twitter bootstrap style checkboxes and radio buttons. Try [Demo](https://bantikyan.github.io/icheck-bootstrap/).
+This Python script reads trades description in a CSV file and executes them on the Alpaca broker
+A paper account for Alpaca can be opened easily on Alpaca.markets(https://Alpaca.markets).
 
-You may also like to try [icheck-material](https://github.com/bantikyan/icheck-material).
+## The CSV file contains:
+**Symbol** - the ticker symbol to trade
 
-## Table of contents
-## Getting started
+**Action** - buy or sell
 
-Several quick start options are available:
+**Quantity** - the size to trade
 
-* [Download the latest release](https://github.com//bantikyan/icheck-bootstrap/archive/3.0.1.zip)
+**Order Type** - 'market' for market order, 'limit' for limit order type
 
+**Lmt Price** - limit threshold to use for LMT order type
+
+**Stop Loss** - stop loss used for execution
+
+**Take Profit** - take profit target
+
+## Connecting to Alpaca
+main_cfg.txt file contains the required key id and secret key used to connect to Alpaca
+Once you signed up , go the the main page to generate these and copy paste 
+to the main_cfg.txt file
+
+### Usage
+You are free to use the code in any way you like,
+
+**If you have questions shoot me an email Alon@AlphaOverBeta.net**
+
+Trade smartly,
+
+Alon

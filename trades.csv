@@ -1,4 +1,4 @@
-Symbol,Action,Quantity,Order Type,Lmt Price,Time in Force,Stop Loss,Take Profit
-QQQ,SELL,1,LMT,284,DAY,282,289
-F,SELL,1,MKT,,DAY,,
-GE,BUY,1,LMT,85,DAY,80,90
+Symbol,Action,Quantity,Order Type,Lmt Price,Stop Loss,Take Profit
+QQQ,SELL,1,limit,284,282,289
+F,SELL,1,market,,,
+GE,BUY,1,limit,85,80,90
