@@ -1,0 +1,7 @@
+[BROKER]
+
+#Alpaca API keys
+key_id = SOME_KEY_ID
+secret_key = THE_SECRET_KEY
+
+[BOT]
