@@ -1,7 +1,8 @@
 # CSV Trader
 
 This Python script reads trades description in a CSV file and executes them on the Alpaca broker
-A paper account for Alpaca can be opened easily on Alpaca.markets(https://Alpaca.markets).
+
+A paper account for Alpaca can be opened easily https://Alpaca.markets
 
 ## The CSV file contains:
 **Symbol** - the ticker symbol to trade
@@ -20,7 +21,7 @@ A paper account for Alpaca can be opened easily on Alpaca.markets(https://Alpaca
 
 ## Connecting to Alpaca
 main_cfg.txt file contains the required key id and secret key used to connect to Alpaca
-Once you signed up , go the the main page to generate these and copy paste 
+Once you signed up to Alpaca , go the the main page to generate these and copy paste 
 to the main_cfg.txt file
 
 ### Usage
